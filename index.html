@@ -39,7 +39,7 @@
 
         .pixel-header {
             font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
+            font-size: 10px;
             color: var(--primary);
         }
 
@@ -56,6 +56,32 @@
         .pixel-btn:active:not(:disabled) {
             box-shadow: 0px 0px 0px var(--black);
             transform: translate(3px, 3px);
+        }
+
+        /* Tab Navigation Styling */
+        .nav-tab {
+            flex: 1;
+            padding: 10px 4px;
+            background: #ddd;
+            border: 3px solid black;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s steps(4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-tab.active {
+            background: white;
+            border-bottom: none;
+            transform: scale(1.1) translateY(4px);
+            z-index: 10;
+            font-size: 9px;
+            border-width: 4px;
+            box-shadow: 0px -4px 0px white;
         }
 
         .pixel-input, select {
@@ -132,6 +158,33 @@
             background: var(--primary);
             color: white;
         }
+
+        .profile-movie-card {
+            border: 3px solid black;
+            padding: 10px;
+            background: white;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+        .profile-movie-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .prix-rank {
+            width: 40px;
+            height: 40px;
+            background: black;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            border: 2px solid white;
+            box-shadow: 3px 3px 0px black;
+        }
     </style>
 </head>
 <body class="flex flex-col">
@@ -139,7 +192,7 @@
     <!-- Login View -->
     <div id="login-view" class="fixed inset-0 bg-white z-[300] flex items-center justify-center p-6">
         <div class="pixel-card p-8 w-full max-w-xs text-center">
-            <h1 class="pixel-header mb-6">FILM FESTIVAL</h1>
+            <h1 class="pixel-header mb-6" style="font-size: 14px;">FILM FESTIVAL</h1>
             <input type="text" id="name-input" placeholder="DEIN NAME..." class="pixel-input p-3 mb-6">
             <button id="login-btn" class="pixel-btn w-full bg-blue-500 text-white py-4">START</button>
         </div>
@@ -147,9 +200,11 @@
 
     <!-- Main View -->
     <div id="main-view" class="hidden flex flex-col h-full">
-        <header class="bg-white border-b-4 border-black p-4 flex justify-between items-center">
-            <h2 id="title-text" class="pixel-header">PLANNING BOARD</h2>
-            <button id="toggle-profile" class="pixel-btn bg-black text-white px-3 py-1">PROFIL</button>
+        <!-- Tab Header -->
+        <header class="bg-slate-200 border-b-4 border-black px-2 pt-4 flex items-end gap-1 z-20">
+            <div id="tab-planer" class="nav-tab active">PLANER</div>
+            <div id="tab-prix" class="nav-tab">PRIX</div>
+            <div id="tab-profil" class="nav-tab">PROFIL</div>
         </header>
 
         <!-- Planning Board -->
@@ -157,15 +212,26 @@
             <p class="text-center mt-10 animate-pulse">LADE FILME...</p>
         </div>
 
+        <!-- Prix du Public View -->
+        <div id="prix-container" class="hidden flex-1 overflow-y-auto p-4 space-y-4">
+            <div class="pixel-card p-4 mb-6 bg-yellow-50">
+                <h2 class="pixel-header text-center" style="color: black;">PRIX DU PUBLIC</h2>
+                <p class="text-center text-sm mt-1">Die am besten bewerteten Filme</p>
+            </div>
+            <div id="prix-list" class="space-y-4">
+                <!-- Ranked movies go here -->
+            </div>
+        </div>
+
         <!-- Profile View -->
         <div id="profile-container" class="hidden flex-1 overflow-y-auto p-4 space-y-6">
             <div class="pixel-card p-4">
                 <p class="pixel-header text-[10px] mb-4">MEINE FILME</p>
-                <div id="my-movies-list" class="space-y-2 text-xl"></div>
+                <div id="my-movies-list" class="space-y-3 text-xl"></div>
             </div>
             <div class="pixel-card p-4">
                 <p class="pixel-header text-[10px] mb-4">GESEHEN / DABEI</p>
-                <div id="joined-movies-list" class="space-y-2 text-xl"></div>
+                <div id="joined-movies-list" class="space-y-3 text-xl"></div>
             </div>
             <button id="logout-btn" class="w-full text-red-600 font-bold underline text-sm py-4">ABMELDEN</button>
         </div>
@@ -182,24 +248,48 @@
             </div>
             <form id="movie-form" class="space-y-4">
                 <div class="relative">
+                    <label class="block text-xs font-bold mb-1">FILM TITEL</label>
                     <input type="text" id="m-title" placeholder="FILM NAME..." class="pixel-input p-2" required autocomplete="off">
                     <div id="autocomplete" class="absolute left-0 right-0 bg-white border-2 border-black z-50 hidden max-h-32 overflow-y-auto"></div>
                 </div>
                 <div class="flex gap-2">
-                    <select id="m-day" class="p-2">
-                        <option value="FR">FR</option>
-                        <option value="SA">SA</option>
-                        <option value="SO">SO</option>
-                        <option value="MO">MO</option>
-                        <option value="DI">DI</option>
-                        <option value="MI">MI</option>
-                        <option value="DO">DO</option>
-                    </select>
-                    <input type="time" id="m-time" class="pixel-input p-2" required>
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold mb-1">TAG</label>
+                        <select id="m-day" class="p-2"></select>
+                    </div>
+                    <div class="w-1/3">
+                        <label class="block text-xs font-bold mb-1">ZEIT (24H)</label>
+                        <input type="time" id="m-time" class="pixel-input p-2" required>
+                    </div>
                 </div>
                 <button type="submit" class="pixel-btn w-full bg-blue-500 text-white py-3">SPEICHERN</button>
                 <button type="button" id="delete-movie" class="hidden w-full text-red-600 font-bold py-2 mt-2 underline">LÖSCHEN</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Viewer/Join Details Modal -->
+    <div id="details-modal" class="modal">
+        <div class="pixel-card p-6 w-full max-w-sm">
+            <div class="flex justify-between mb-4">
+                <p class="pixel-header">FILM DETAILS</p>
+                <button class="close-modal text-2xl font-bold">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <h3 id="details-title" class="text-3xl font-bold leading-none mb-1"></h3>
+                    <p id="details-time" class="text-xl text-blue-600 font-bold"></p>
+                </div>
+                <div class="bg-slate-50 border-2 border-black p-3">
+                    <p class="text-xs uppercase font-bold text-slate-500">Organisator</p>
+                    <p id="details-creator" class="text-xl font-bold"></p>
+                </div>
+                <div>
+                    <p class="text-xs uppercase font-bold text-slate-500 mb-1">Dabei:</p>
+                    <div id="details-joined-list" class="flex flex-wrap gap-2 text-sm"></div>
+                </div>
+                <button id="details-join-btn" class="pixel-btn w-full py-4 text-white"></button>
+            </div>
         </div>
     </div>
 
@@ -225,7 +315,6 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-        // Your Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBbZJyMeGgrY5C2rW7aIjnj-txM9ZW8UC8",
             authDomain: "filmtage-3b156.firebaseapp.com",
@@ -242,22 +331,41 @@
         const appId = "filmtage-v1";
 
         let userName = localStorage.getItem('ff_user');
-        let moviesData = {}; // Realtime Database returns an object
+        let moviesData = {}; 
         let editingId = null;
         let ratingPercent = 0;
         let ratingTargetId = null;
 
-        const dayMap = { FR:1, SA:2, SO:3, MO:4, DI:5, MI:6, DO:7 };
+        const WEEKDAYS = ["SO", "MO", "DI", "MI", "DO", "FR", "SA"];
 
-        // Helper: Check status based on 15 min rule
-        const getStatus = (day, time) => {
+        const getDayLabels = () => {
+            const labels = [];
+            const now = new Date();
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(now);
+                d.setDate(now.getDate() + i);
+                const dayCode = WEEKDAYS[d.getDay()];
+                const label = i === 0 ? "Heute" : (i === 1 ? "Morgen" : dayCode);
+                labels.push({ code: dayCode, label: label });
+            }
+            return labels;
+        };
+
+        const renderDayOptions = () => {
+            const select = document.getElementById('m-day');
+            const labels = getDayLabels();
+            select.innerHTML = labels.map(l => `<option value="${l.code}">${l.label} (${l.code})</option>`).join('');
+        };
+
+        const getStatus = (dayCode, time) => {
             const now = new Date();
             const [h, m] = time.split(':').map(Number);
-            const movieTime = new Date();
-            movieTime.setHours(h, m, 0);
-            
-            // Check if more than 15 minutes have passed since start
-            const isPast = now.getTime() > (movieTime.getTime() + 15 * 60000);
+            const movieDate = new Date();
+            let dayOffset = WEEKDAYS.indexOf(dayCode) - now.getDay();
+            if (dayOffset < 0) dayOffset += 7;
+            movieDate.setDate(now.getDate() + dayOffset);
+            movieDate.setHours(h, m, 0, 0);
+            const isPast = now.getTime() > (movieDate.getTime() + 15 * 60000);
             return isPast ? 'past' : 'upcoming';
         };
 
@@ -267,11 +375,9 @@
             setTimeout(() => t.classList.add('hidden'), 2000);
         };
 
-        // Login Logic
         const handleLogin = async () => {
             const name = document.getElementById('name-input').value.trim();
             if (!name) return showToast("NAME EINGEBEN!");
-            
             try {
                 await signInAnonymously(auth);
                 userName = name;
@@ -279,9 +385,9 @@
                 document.getElementById('login-view').classList.add('hidden');
                 document.getElementById('main-view').classList.remove('hidden');
                 document.getElementById('add-movie-fab').classList.remove('hidden');
+                renderDayOptions();
                 startListening();
             } catch (e) {
-                console.error(e);
                 showToast("AUTH FEHLER!");
             }
         };
@@ -298,7 +404,35 @@
             location.reload();
         };
 
-        // Realtime Data Sync
+        // Navigation Control
+        const switchTab = (tab) => {
+            const sections = {
+                'planer': 'board-container',
+                'prix': 'prix-container',
+                'profil': 'profile-container'
+            };
+            
+            // UI visibility
+            Object.keys(sections).forEach(key => {
+                document.getElementById(sections[key]).classList.add('hidden');
+                document.getElementById(`tab-${key}`).classList.remove('active');
+            });
+            
+            document.getElementById(sections[tab]).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            
+            if (tab === 'planer') document.getElementById('add-movie-fab').classList.remove('hidden');
+            else document.getElementById('add-movie-fab').classList.add('hidden');
+            
+            // Title update
+            const titles = { 'planer': 'PLANNING BOARD', 'prix': 'PRIX DU PUBLIC', 'profil': 'MEIN PROFIL' };
+            // Optional: document.getElementById('title-text').textContent = titles[tab];
+        };
+
+        document.getElementById('tab-planer').onclick = () => switchTab('planer');
+        document.getElementById('tab-prix').onclick = () => switchTab('prix');
+        document.getElementById('tab-profil').onclick = () => switchTab('profil');
+
         const startListening = () => {
             const moviesRef = ref(rtdb, `apps/${appId}/movies`);
             onValue(moviesRef, (snapshot) => {
@@ -307,32 +441,45 @@
             });
         };
 
+        const calculateAverage = (ratings) => {
+            if (!ratings) return 0;
+            const values = Object.values(ratings);
+            if (values.length === 0) return 0;
+            const sum = values.reduce((a, b) => a + b, 0);
+            return Math.round(sum / values.length);
+        };
+
         const renderUI = () => {
             const board = document.getElementById('board-container');
+            const prixList = document.getElementById('prix-list');
             board.innerHTML = '';
+            prixList.innerHTML = '';
 
-            // Convert object to array for sorting
             const moviesList = Object.keys(moviesData).map(id => ({ id, ...moviesData[id] }));
 
-            const sorted = moviesList.sort((a, b) => {
+            // Sorting for Planer
+            const dayOrder = getDayLabels().map(l => l.code);
+            const sortedPlaner = [...moviesList].sort((a, b) => {
                 const sA = getStatus(a.day, a.time);
                 const sB = getStatus(b.day, b.time);
-                
-                // 1. Upcoming first
                 if (sA !== sB) return sA === 'upcoming' ? -1 : 1;
-                
-                // 2. Sort by Day
-                if (a.day !== b.day) return dayMap[a.day] - dayMap[b.day];
-                
-                // 3. Sort by Time
+                const dIdxA = dayOrder.indexOf(a.day);
+                const dIdxB = dayOrder.indexOf(b.day);
+                if (dIdxA !== dIdxB) return dIdxA - dIdxB;
                 return a.time.localeCompare(b.time);
             });
 
-            if (sorted.length === 0) {
+            // Sorting for Prix (Only those with at least one rating)
+            const sortedPrix = [...moviesList]
+                .filter(m => m.ratings && Object.keys(m.ratings).length > 0)
+                .map(m => ({ ...m, avg: calculateAverage(m.ratings), voteCount: Object.keys(m.ratings).length }))
+                .sort((a, b) => b.avg - a.avg);
+
+            if (sortedPlaner.length === 0) {
                 board.innerHTML = `<p class="text-center mt-10 text-slate-400">Keine Filme geplant.</p>`;
             }
 
-            sorted.forEach(m => {
+            sortedPlaner.forEach(m => {
                 const status = getStatus(m.day, m.time);
                 const rating = m.ratings?.[userName];
                 const div = document.createElement('div');
@@ -352,14 +499,37 @@
                 board.appendChild(div);
             });
 
+            // Render Prix List
+            if (sortedPrix.length === 0) {
+                prixList.innerHTML = `<div class="pixel-card p-6 text-center italic text-slate-400">Noch keine Bewertungen vorhanden.</div>`;
+            } else {
+                sortedPrix.forEach((m, idx) => {
+                    const div = document.createElement('div');
+                    div.className = "pixel-card p-4 flex items-center gap-4 bg-white";
+                    div.innerHTML = `
+                        <div class="prix-rank">${idx + 1}</div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold leading-none">${m.title.toUpperCase()}</h3>
+                            <p class="text-xs font-bold text-slate-500 mt-1">${m.voteCount} Stimme(n)</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-blue-600">${m.avg}%</p>
+                            <div class="w-16 h-2 bg-slate-200 border border-black overflow-hidden mt-1">
+                                <div class="h-full bg-blue-500" style="width: ${m.avg}%"></div>
+                            </div>
+                        </div>
+                    `;
+                    prixList.appendChild(div);
+                });
+            }
+
             renderProfile();
         };
 
         const renderProfile = () => {
             const planned = document.getElementById('my-movies-list');
             const joined = document.getElementById('joined-movies-list');
-            planned.innerHTML = ''; 
-            joined.innerHTML = '';
+            planned.innerHTML = ''; joined.innerHTML = '';
 
             Object.keys(moviesData).forEach(id => {
                 const m = { id, ...moviesData[id] };
@@ -368,8 +538,16 @@
 
                 if (isCreator) {
                     const div = document.createElement('div');
-                    div.className = "p-2 border-b border-black flex justify-between items-center";
-                    div.innerHTML = `<span>${m.title}</span> <button class="pixel-btn bg-blue-500 text-white px-2">EDIT</button>`;
+                    div.className = "profile-movie-card";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500">${m.day} ${m.time}</p>
+                                <p class="font-bold">${m.title.toUpperCase()}</p>
+                            </div>
+                            <span class="text-[10px] bg-blue-100 text-blue-700 px-1 border border-blue-300">EDIT</span>
+                        </div>
+                    `;
                     div.onclick = () => openDetails(m);
                     planned.appendChild(div);
                 }
@@ -377,8 +555,18 @@
                 if (!isCreator && isJoined) {
                     const div = document.createElement('div');
                     const score = m.ratings?.[userName];
-                    div.className = "p-2 border-b border-black flex justify-between items-center";
-                    div.innerHTML = `<span>${m.title}</span> <button class="pixel-btn bg-green-600 text-white px-2">${score !== undefined ? score+'%' : 'RATE'}</button>`;
+                    div.className = "profile-movie-card";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500">${m.day} ${m.time}</p>
+                                <p class="font-bold">${m.title.toUpperCase()}</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-[10px] font-bold text-green-700">${score !== undefined ? score+'%' : 'BEWERTEN'}</p>
+                            </div>
+                        </div>
+                    `;
                     div.onclick = () => openRating(m);
                     joined.appendChild(div);
                 }
@@ -395,16 +583,32 @@
                 document.getElementById('delete-movie').classList.remove('hidden');
                 document.getElementById('movie-modal').style.display = 'flex';
             } else {
-                const joined = movie.joined && movie.joined[userName];
-                if (confirm(`${movie.title} am ${movie.day} um ${movie.time}\nOrganisator: ${movie.creator}\n\n${joined ? 'Austreten?' : 'Beitreten?'}`)) {
+                const modal = document.getElementById('details-modal');
+                const title = document.getElementById('details-title');
+                const time = document.getElementById('details-time');
+                const creator = document.getElementById('details-creator');
+                const joinList = document.getElementById('details-joined-list');
+                const joinBtn = document.getElementById('details-join-btn');
+                title.textContent = movie.title.toUpperCase();
+                time.textContent = `${movie.day} @ ${movie.time}`;
+                creator.textContent = movie.creator;
+                const joinedNames = movie.joined ? Object.keys(movie.joined) : [];
+                joinList.innerHTML = joinedNames.length > 0 
+                    ? joinedNames.map(n => `<span class="bg-slate-200 px-2 py-0.5 border border-black">${n}</span>`).join('')
+                    : '<span class="italic text-slate-400">Noch niemand dabei</span>';
+                const isJoined = movie.joined && movie.joined[userName];
+                joinBtn.textContent = isJoined ? "AUSTRETEN" : "JETZT BEITRETEN";
+                joinBtn.style.backgroundColor = isJoined ? "var(--danger)" : "var(--success)";
+                joinBtn.onclick = () => {
                     const joinRef = ref(rtdb, `apps/${appId}/movies/${movie.id}/joined/${userName}`);
-                    if (joined) remove(joinRef);
+                    if (isJoined) remove(joinRef);
                     else set(joinRef, true);
-                }
+                    modal.style.display = 'none';
+                };
+                modal.style.display = 'flex';
             }
         };
 
-        // Form Logic
         document.getElementById('add-movie-fab').onclick = () => {
             editingId = null;
             document.getElementById('modal-title').textContent = "NEUER FILM";
@@ -422,7 +626,6 @@
             const title = document.getElementById('m-title').value.trim();
             const day = document.getElementById('m-day').value;
             const time = document.getElementById('m-time').value;
-
             try {
                 if (editingId) {
                     const movieRef = ref(rtdb, `apps/${appId}/movies/${editingId}`);
@@ -451,23 +654,6 @@
             }
         };
 
-        // Profile Toggle
-        document.getElementById('toggle-profile').onclick = () => {
-            const isBoard = document.getElementById('profile-container').classList.contains('hidden');
-            if (isBoard) {
-                document.getElementById('board-container').classList.add('hidden');
-                document.getElementById('profile-container').classList.remove('hidden');
-                document.getElementById('title-text').textContent = "MEIN PROFIL";
-                document.getElementById('toggle-profile').textContent = "BOARD";
-            } else {
-                document.getElementById('board-container').classList.remove('hidden');
-                document.getElementById('profile-container').classList.add('hidden');
-                document.getElementById('title-text').textContent = "PLANNING BOARD";
-                document.getElementById('toggle-profile').textContent = "PROFIL";
-            }
-        };
-
-        // Rating Logic
         const openRating = (movie) => {
             ratingTargetId = movie.id;
             document.getElementById('rate-movie-name').textContent = movie.title;
@@ -507,15 +693,12 @@
             showToast("BEWERTET!");
         };
 
-        // Autocomplete Logic
         document.getElementById('m-title').oninput = (e) => {
             const val = e.target.value.toLowerCase();
             const box = document.getElementById('autocomplete');
             if (!val) return box.classList.add('hidden');
-            
             const existingTitles = [...new Set(Object.values(moviesData).map(m => m.title))];
             const matches = existingTitles.filter(t => t.toLowerCase().includes(val));
-            
             if (matches.length) {
                 box.innerHTML = matches.map(t => `<div class="p-2 border-b border-slate-200 cursor-pointer">${t}</div>`).join('');
                 box.classList.remove('hidden');

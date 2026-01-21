@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Film Festival Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007bff;
+            --success: #2da44e;
+            --danger: #cf222e;
+            --black: #000000;
+            --bg-color: #f8f9fa;
+            --grid-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--black);
+            font-size: 20px;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .pixel-card {
+            background: white;
+            border: 4px solid var(--black);
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
+        }
+
+        .pixel-header {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            color: var(--primary);
+        }
+
+        .pixel-btn {
+            display: inline-block;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            border: 3px solid var(--black);
+            box-shadow: 4px 4px 0px var(--black);
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .pixel-btn:active:not(:disabled) {
+            box-shadow: 0px 0px 0px var(--black);
+            transform: translate(3px, 3px);
+        }
+
+        .pixel-input, select {
+            font-family: 'VT323', monospace;
+            font-size: 22px;
+            border: 3px solid var(--black);
+            outline: none;
+            background: white;
+            border-radius: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .movie-item {
+            border: 4px solid var(--black);
+            margin-bottom: 15px;
+            padding: 15px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .upcoming { background-color: #e6ffed; border-color: var(--success); box-shadow: 4px 4px 0px var(--success); }
+        .past { background-color: #fff0f0; border-color: var(--danger); box-shadow: 4px 4px 0px var(--danger); opacity: 0.8; }
+
+        .rating-bar-container {
+            width: 100%;
+            height: 35px;
+            background: #fff;
+            border: 3px solid #000;
+            position: relative;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .rating-bar-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+        }
+        .rating-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 5px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        #add-movie-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border: 4px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            font-size: 30px;
+            z-index: 100;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        #autocomplete div:hover {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+
+    <!-- Login View -->
+    <div id="login-view" class="fixed inset-0 bg-white z-[300] flex items-center justify-center p-6">
+        <div class="pixel-card p-8 w-full max-w-xs text-center">
+            <h1 class="pixel-header mb-6">FILM FESTIVAL</h1>
+            <input type="text" id="name-input" placeholder="DEIN NAME..." class="pixel-input p-3 mb-6">
+            <button id="login-btn" class="pixel-btn w-full bg-blue-500 text-white py-4">START</button>
+        </div>
+    </div>
+
+    <!-- Main View -->
+    <div id="main-view" class="hidden flex flex-col h-full">
+        <header class="bg-white border-b-4 border-black p-4 flex justify-between items-center">
+            <h2 id="title-text" class="pixel-header">PLANNING BOARD</h2>
+            <button id="toggle-profile" class="pixel-btn bg-black text-white px-3 py-1">PROFIL</button>
+        </header>
+
+        <!-- Planning Board -->
+        <div id="board-container" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <p class="text-center mt-10 animate-pulse">LADE FILME...</p>
+        </div>
+
+        <!-- Profile View -->
+        <div id="profile-container" class="hidden flex-1 overflow-y-auto p-4 space-y-6">
+            <div class="pixel-card p-4">
+                <p class="pixel-header text-[10px] mb-4">MEINE FILME</p>
+                <div id="my-movies-list" class="space-y-2 text-xl"></div>
+            </div>
+            <div class="pixel-card p-4">
+                <p class="pixel-header text-[10px] mb-4">GESEHEN / DABEI</p>
+                <div id="joined-movies-list" class="space-y-2 text-xl"></div>
+            </div>
+            <button id="logout-btn" class="w-full text-red-600 font-bold underline text-sm py-4">ABMELDEN</button>
+        </div>
+    </div>
+
+    <button id="add-movie-fab" class="hidden"><i class="fas fa-plus"></i></button>
+
+    <!-- Movie Entry Modal -->
+    <div id="movie-modal" class="modal">
+        <div class="pixel-card p-6 w-full max-w-sm">
+            <div class="flex justify-between mb-4">
+                <p id="modal-title" class="pixel-header">NEUER FILM</p>
+                <button class="close-modal text-2xl font-bold">&times;</button>
+            </div>
+            <form id="movie-form" class="space-y-4">
+                <div class="relative">
+                    <input type="text" id="m-title" placeholder="FILM NAME..." class="pixel-input p-2" required autocomplete="off">
+                    <div id="autocomplete" class="absolute left-0 right-0 bg-white border-2 border-black z-50 hidden max-h-32 overflow-y-auto"></div>
+                </div>
+                <div class="flex gap-2">
+                    <select id="m-day" class="p-2">
+                        <option value="FR">FR</option>
+                        <option value="SA">SA</option>
+                        <option value="SO">SO</option>
+                        <option value="MO">MO</option>
+                        <option value="DI">DI</option>
+                        <option value="MI">MI</option>
+                        <option value="DO">DO</option>
+                    </select>
+                    <input type="time" id="m-time" class="pixel-input p-2" required>
+                </div>
+                <button type="submit" class="pixel-btn w-full bg-blue-500 text-white py-3">SPEICHERN</button>
+                <button type="button" id="delete-movie" class="hidden w-full text-red-600 font-bold py-2 mt-2 underline">LÖSCHEN</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="rate-modal" class="modal">
+        <div class="pixel-card p-6 w-full max-w-sm">
+            <p id="rate-movie-name" class="pixel-header mb-4"></p>
+            <div class="rating-bar-container" id="rating-slider">
+                <div class="rating-bar-fill" id="rating-fill"></div>
+                <div class="rating-text" id="rating-val">0%</div>
+            </div>
+            <p class="text-sm italic mb-4">Ziehen zum Bewerten (0-100%)</p>
+            <button id="save-rating" class="pixel-btn w-full bg-green-600 text-white py-3">BEWERTEN</button>
+            <button type="button" class="close-modal w-full py-2 mt-2">ZURÜCK</button>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 border-2 border-white text-sm hidden z-[500]"></div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+        // Your Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbZJyMeGgrY5C2rW7aIjnj-txM9ZW8UC8",
+            authDomain: "filmtage-3b156.firebaseapp.com",
+            databaseURL: "https://filmtage-3b156-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "filmtage-3b156",
+            storageBucket: "filmtage-3b156.firebasestorage.app",
+            messagingSenderId: "175802222448",
+            appId: "1:175802222448:web:2318d8ad1e7d727c3931b5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const rtdb = getDatabase(app);
+        const appId = "filmtage-v1";
+
+        let userName = localStorage.getItem('ff_user');
+        let moviesData = {}; // Realtime Database returns an object
+        let editingId = null;
+        let ratingPercent = 0;
+        let ratingTargetId = null;
+
+        const dayMap = { FR:1, SA:2, SO:3, MO:4, DI:5, MI:6, DO:7 };
+
+        // Helper: Check status based on 15 min rule
+        const getStatus = (day, time) => {
+            const now = new Date();
+            const [h, m] = time.split(':').map(Number);
+            const movieTime = new Date();
+            movieTime.setHours(h, m, 0);
+            
+            // Check if more than 15 minutes have passed since start
+            const isPast = now.getTime() > (movieTime.getTime() + 15 * 60000);
+            return isPast ? 'past' : 'upcoming';
+        };
+
+        const showToast = (msg) => {
+            const t = document.getElementById('toast');
+            t.textContent = msg; t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 2000);
+        };
+
+        // Login Logic
+        const handleLogin = async () => {
+            const name = document.getElementById('name-input').value.trim();
+            if (!name) return showToast("NAME EINGEBEN!");
+            
+            try {
+                await signInAnonymously(auth);
+                userName = name;
+                localStorage.setItem('ff_user', name);
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('main-view').classList.remove('hidden');
+                document.getElementById('add-movie-fab').classList.remove('hidden');
+                startListening();
+            } catch (e) {
+                console.error(e);
+                showToast("AUTH FEHLER!");
+            }
+        };
+
+        document.getElementById('login-btn').onclick = handleLogin;
+        if (userName) {
+            document.getElementById('name-input').value = userName;
+            handleLogin();
+        }
+
+        document.getElementById('logout-btn').onclick = async () => {
+            await signOut(auth);
+            localStorage.removeItem('ff_user');
+            location.reload();
+        };
+
+        // Realtime Data Sync
+        const startListening = () => {
+            const moviesRef = ref(rtdb, `apps/${appId}/movies`);
+            onValue(moviesRef, (snapshot) => {
+                moviesData = snapshot.val() || {};
+                renderUI();
+            });
+        };
+
+        const renderUI = () => {
+            const board = document.getElementById('board-container');
+            board.innerHTML = '';
+
+            // Convert object to array for sorting
+            const moviesList = Object.keys(moviesData).map(id => ({ id, ...moviesData[id] }));
+
+            const sorted = moviesList.sort((a, b) => {
+                const sA = getStatus(a.day, a.time);
+                const sB = getStatus(b.day, b.time);
+                
+                // 1. Upcoming first
+                if (sA !== sB) return sA === 'upcoming' ? -1 : 1;
+                
+                // 2. Sort by Day
+                if (a.day !== b.day) return dayMap[a.day] - dayMap[b.day];
+                
+                // 3. Sort by Time
+                return a.time.localeCompare(b.time);
+            });
+
+            if (sorted.length === 0) {
+                board.innerHTML = `<p class="text-center mt-10 text-slate-400">Keine Filme geplant.</p>`;
+            }
+
+            sorted.forEach(m => {
+                const status = getStatus(m.day, m.time);
+                const rating = m.ratings?.[userName];
+                const div = document.createElement('div');
+                div.className = `movie-item ${status}`;
+                div.innerHTML = `
+                    <div class="flex justify-between">
+                        <span class="font-bold text-sm bg-black text-white px-1">${m.day} ${m.time}</span>
+                        ${rating !== undefined ? `<span class="text-blue-700 font-bold">${rating}%</span>` : ''}
+                    </div>
+                    <p class="text-2xl font-bold mt-1">${m.title.toUpperCase()}</p>
+                    <div class="flex justify-between text-xs mt-2 font-bold">
+                        <span>VON: ${m.creator}</span>
+                        <span>${Object.keys(m.joined || {}).length + 1} DABEI</span>
+                    </div>
+                `;
+                div.onclick = () => openDetails(m);
+                board.appendChild(div);
+            });
+
+            renderProfile();
+        };
+
+        const renderProfile = () => {
+            const planned = document.getElementById('my-movies-list');
+            const joined = document.getElementById('joined-movies-list');
+            planned.innerHTML = ''; 
+            joined.innerHTML = '';
+
+            Object.keys(moviesData).forEach(id => {
+                const m = { id, ...moviesData[id] };
+                const isCreator = m.creator === userName;
+                const isJoined = m.joined && m.joined[userName];
+
+                if (isCreator) {
+                    const div = document.createElement('div');
+                    div.className = "p-2 border-b border-black flex justify-between items-center";
+                    div.innerHTML = `<span>${m.title}</span> <button class="pixel-btn bg-blue-500 text-white px-2">EDIT</button>`;
+                    div.onclick = () => openDetails(m);
+                    planned.appendChild(div);
+                }
+
+                if (!isCreator && isJoined) {
+                    const div = document.createElement('div');
+                    const score = m.ratings?.[userName];
+                    div.className = "p-2 border-b border-black flex justify-between items-center";
+                    div.innerHTML = `<span>${m.title}</span> <button class="pixel-btn bg-green-600 text-white px-2">${score !== undefined ? score+'%' : 'RATE'}</button>`;
+                    div.onclick = () => openRating(m);
+                    joined.appendChild(div);
+                }
+            });
+        };
+
+        const openDetails = (movie) => {
+            if (movie.creator === userName) {
+                editingId = movie.id;
+                document.getElementById('modal-title').textContent = "BEARBEITEN";
+                document.getElementById('m-title').value = movie.title;
+                document.getElementById('m-day').value = movie.day;
+                document.getElementById('m-time').value = movie.time;
+                document.getElementById('delete-movie').classList.remove('hidden');
+                document.getElementById('movie-modal').style.display = 'flex';
+            } else {
+                const joined = movie.joined && movie.joined[userName];
+                if (confirm(`${movie.title} am ${movie.day} um ${movie.time}\nOrganisator: ${movie.creator}\n\n${joined ? 'Austreten?' : 'Beitreten?'}`)) {
+                    const joinRef = ref(rtdb, `apps/${appId}/movies/${movie.id}/joined/${userName}`);
+                    if (joined) remove(joinRef);
+                    else set(joinRef, true);
+                }
+            }
+        };
+
+        // Form Logic
+        document.getElementById('add-movie-fab').onclick = () => {
+            editingId = null;
+            document.getElementById('modal-title').textContent = "NEUER FILM";
+            document.getElementById('movie-form').reset();
+            document.getElementById('delete-movie').classList.add('hidden');
+            document.getElementById('movie-modal').style.display = 'flex';
+        };
+
+        document.querySelectorAll('.close-modal').forEach(b => b.onclick = () => {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        });
+
+        document.getElementById('movie-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('m-title').value.trim();
+            const day = document.getElementById('m-day').value;
+            const time = document.getElementById('m-time').value;
+
+            try {
+                if (editingId) {
+                    const movieRef = ref(rtdb, `apps/${appId}/movies/${editingId}`);
+                    await update(movieRef, { title, day, time });
+                } else {
+                    const moviesRef = ref(rtdb, `apps/${appId}/movies`);
+                    await push(moviesRef, {
+                        title, day, time, 
+                        creator: userName, 
+                        createdAt: Date.now(),
+                        joined: {},
+                        ratings: {}
+                    });
+                }
+                document.getElementById('movie-modal').style.display = 'none';
+                showToast("GESPEICHERT!");
+            } catch (e) {
+                showToast("SPEICHERFEHLER!");
+            }
+        };
+
+        document.getElementById('delete-movie').onclick = async () => {
+            if (confirm("FILM LÖSCHEN?")) {
+                await remove(ref(rtdb, `apps/${appId}/movies/${editingId}`));
+                document.getElementById('movie-modal').style.display = 'none';
+            }
+        };
+
+        // Profile Toggle
+        document.getElementById('toggle-profile').onclick = () => {
+            const isBoard = document.getElementById('profile-container').classList.contains('hidden');
+            if (isBoard) {
+                document.getElementById('board-container').classList.add('hidden');
+                document.getElementById('profile-container').classList.remove('hidden');
+                document.getElementById('title-text').textContent = "MEIN PROFIL";
+                document.getElementById('toggle-profile').textContent = "BOARD";
+            } else {
+                document.getElementById('board-container').classList.remove('hidden');
+                document.getElementById('profile-container').classList.add('hidden');
+                document.getElementById('title-text').textContent = "PLANNING BOARD";
+                document.getElementById('toggle-profile').textContent = "PROFIL";
+            }
+        };
+
+        // Rating Logic
+        const openRating = (movie) => {
+            ratingTargetId = movie.id;
+            document.getElementById('rate-movie-name').textContent = movie.title;
+            const current = movie.ratings?.[userName] || 0;
+            updateSlider(current);
+            document.getElementById('rate-modal').style.display = 'flex';
+        };
+
+        const updateSlider = (val) => {
+            ratingPercent = Math.max(0, Math.min(100, val));
+            document.getElementById('rating-fill').style.width = ratingPercent + '%';
+            document.getElementById('rating-val').textContent = ratingPercent + '%';
+        };
+
+        const handleSliderInput = (e) => {
+            const rect = document.getElementById('rating-slider').getBoundingClientRect();
+            const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+            const x = clientX - rect.left;
+            updateSlider(Math.round((x / rect.width) * 100));
+        };
+
+        document.getElementById('rating-slider').onmousedown = (e) => {
+            handleSliderInput(e);
+            window.onmousemove = handleSliderInput;
+            window.onmouseup = () => window.onmousemove = null;
+        };
+
+        document.getElementById('rating-slider').ontouchmove = (e) => {
+            e.preventDefault();
+            handleSliderInput(e);
+        };
+
+        document.getElementById('save-rating').onclick = async () => {
+            const ratingRef = ref(rtdb, `apps/${appId}/movies/${ratingTargetId}/ratings/${userName}`);
+            await set(ratingRef, ratingPercent);
+            document.getElementById('rate-modal').style.display = 'none';
+            showToast("BEWERTET!");
+        };
+
+        // Autocomplete Logic
+        document.getElementById('m-title').oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            const box = document.getElementById('autocomplete');
+            if (!val) return box.classList.add('hidden');
+            
+            const existingTitles = [...new Set(Object.values(moviesData).map(m => m.title))];
+            const matches = existingTitles.filter(t => t.toLowerCase().includes(val));
+            
+            if (matches.length) {
+                box.innerHTML = matches.map(t => `<div class="p-2 border-b border-slate-200 cursor-pointer">${t}</div>`).join('');
+                box.classList.remove('hidden');
+                box.querySelectorAll('div').forEach(d => d.onclick = () => {
+                    document.getElementById('m-title').value = d.textContent;
+                    box.classList.add('hidden');
+                });
+            } else box.classList.add('hidden');
+        };
+
+    </script>
+</body>
+</html>

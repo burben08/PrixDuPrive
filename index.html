@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Film Festival Planner</title>
+    <title>Soli Filmtage Planer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
                 linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 20px 20px;
             color: var(--black);
-            font-size: 26px; /* Enlarged base font */
+            font-size: 24px;
             margin: 0;
             height: 100vh;
             overflow: hidden;
@@ -41,15 +41,15 @@
 
         .pixel-header {
             font-family: 'Press Start 2P', cursive;
-            font-size: 14px; /* Enlarged headers */
+            font-size: 12px;
             color: var(--primary);
         }
 
-        /* 3D Buttons - Now Coloured Out */
+        /* 3D Buttons */
         .pixel-btn {
             display: inline-block;
             font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
+            font-size: 11px;
             border: 3px solid var(--black);
             box-shadow: 4px 4px 0px var(--black);
             cursor: pointer;
@@ -77,7 +77,7 @@
             flex: 1;
             padding: 12px 5px;
             font-family: 'Press Start 2P', cursive;
-            font-size: 9px;
+            font-size: 8px;
             border: 3px solid black;
             box-shadow: 4px 4px 0px black;
             color: white;
@@ -99,7 +99,7 @@
 
         .pixel-input, select {
             font-family: 'VT323', monospace;
-            font-size: 28px;
+            font-size: 26px;
             border: 3px solid var(--black);
             outline: none;
             background: white;
@@ -111,13 +111,24 @@
         .movie-item {
             border: 3px solid var(--black);
             margin-bottom: 12px;
-            padding: 14px 18px;
+            padding: 12px 15px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: white;
             box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        .movie-item:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px transparent;
+        }
+
+        /* Slightly smaller font for movies in Planer */
+        .movie-item p {
+            font-size: 24px;
+            font-weight: bold;
         }
 
         .past { 
@@ -132,13 +143,13 @@
             position: fixed;
             bottom: 25px;
             right: 25px;
-            width: 65px;
-            height: 65px;
+            width: 60px;
+            height: 60px;
             background: var(--primary);
             color: white;
             border: 3px solid #000;
             box-shadow: 4px 4px 0px #000;
-            font-size: 26px;
+            font-size: 24px;
             z-index: 100;
             font-family: 'Press Start 2P', cursive;
             display: flex;
@@ -214,7 +225,7 @@
             height: 100%;
             background: var(--success);
             width: 0%;
-            opacity: 0.8; /* Higher opacity as requested */
+            opacity: 0.8;
         }
         .rating-percent-display {
             position: absolute;
@@ -222,7 +233,7 @@
             text-align: center;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 64px; /* Much larger percentage */
+            font-size: 64px;
             font-weight: bold;
             font-family: 'VT323', monospace;
             pointer-events: none;
@@ -236,8 +247,8 @@
     <!-- Login View -->
     <div id="login-view" class="fixed inset-0 bg-white z-[300] flex items-center justify-center p-6 grid-bg">
         <div class="pixel-card p-8 w-full max-w-xs text-center">
-            <h1 class="pixel-header mb-8" style="font-size: 18px; line-height: 1.5;">FILM FESTIVAL</h1>
-            <input type="text" id="name-input" placeholder="DEIN NAME..." class="pixel-input p-3 mb-6">
+            <h1 class="pixel-header mb-8" style="font-size: 18px; line-height: 1.5;">FILMTAGE PLANER</h1>
+            <input type="text" id="name-input" placeholder="Di Name..." class="pixel-input p-3 mb-6">
             <button id="login-btn" class="pixel-btn w-full py-5">START</button>
         </div>
     </div>
@@ -260,7 +271,7 @@
         <!-- Section: Prix -->
         <div id="prix-container" class="hidden flex-1 overflow-y-auto p-4 space-y-4">
             <div class="pixel-card p-4 mb-2 bg-yellow-50">
-                <h2 class="pixel-header text-center" style="color: black; font-size: 16px;">PRIX DU PUBLIC</h2>
+                <h2 class="pixel-header text-center" style="color: black; font-size: 16px;">PRIX DU PIPI</h2>
                 <p class="text-center text-xl mt-1">Beliebteste Filme</p>
             </div>
             <div id="prix-list" class="space-y-3"></div>
@@ -309,7 +320,7 @@
                     </div>
                 </div>
                 <button type="submit" class="pixel-btn w-full py-5 mt-2">SAVE</button>
-                <button type="button" id="delete-movie-modal-btn" class="pixel-btn w-full py-3 mt-4 text-white" style="background-color: var(--danger);">LÖSCHEN</button>
+                <button type="button" id="delete-movie-modal-btn" class="pixel-btn bg-red-500 w-full py-3 mt-4 text-white">LÖSCHEN</button>
             </form>
         </div>
     </div>
@@ -333,7 +344,8 @@
                         <div class="rating-bar-fill" id="rating-fill"></div>
                         <div class="rating-percent-display" id="rating-val">0%</div>
                     </div>
-                    <p class="text-base italic text-center opacity-70">Ziehen zum Einstellen</p>
+                    <button id="details-save-rating-btn" class="pixel-btn w-full py-4 bg-green-600 text-white shadow-[4px_4px_0px_black] active:translate-y-1 mb-2">BEWERTUNG SPEICHERN</button>
+                    <p class="text-sm italic text-center opacity-70">Ziehen zum Einstellen</p>
                 </div>
 
                 <div id="details-organizer-section" class="border-2 border-black p-3 bg-slate-50 shadow-[4px_4px_0px_rgba(0,0,0,0.05)]">
@@ -347,7 +359,7 @@
                 </div>
 
                 <button id="details-join-btn" class="pixel-btn w-full py-5 mt-2"></button>
-                <button id="details-delete-btn" class="pixel-btn w-full py-3 mt-4 text-white hidden" style="background-color: var(--danger);">LÖSCHEN</button>
+                <button id="details-delete-btn" class="pixel-btn bg-red-500 w-full py-3 mt-4 text-white hidden">LÖSCHEN</button>
             </div>
         </div>
     </div>
@@ -388,10 +400,10 @@
         let userName = localStorage.getItem('ff_user');
         let moviesData = {}; 
         let currentEditingId = null;
+        let tempRatingVal = 0; // State for current drag value
 
         const FEST_SEQUENCE = ["TH", "FR", "SA", "SO", "MO", "DI", "MI"];
 
-        // --- Custom Confirmation Logic ---
         let confirmAction = null;
         const askConfirm = (msg, action) => {
             document.getElementById('confirm-text').textContent = msg.toUpperCase();
@@ -416,7 +428,6 @@
             const todayCode = getTodayCode();
             const todayIdx = FEST_SEQUENCE.indexOf(todayCode);
             const movieIdx = FEST_SEQUENCE.indexOf(dayCode);
-            
             if (movieIdx < todayIdx) return 'past';
             if (movieIdx === todayIdx) {
                 const now = new Date();
@@ -502,7 +513,6 @@
 
             const list = Object.keys(moviesData).map(id => ({ id, ...moviesData[id] }));
 
-            // Planer Render
             const sortedPlaner = [...list].sort((a,b) => {
                 const sA = getStatus(a.day, a.time), sB = getStatus(b.day, b.time);
                 if (sA !== sB) return sA === 'upcoming' ? -1 : 1;
@@ -515,7 +525,7 @@
                 const div = document.createElement('div');
                 div.className = `movie-item ${getStatus(m.day, m.time)}`;
                 div.innerHTML = `
-                    <p class="text-3xl font-bold">${m.title.toUpperCase()}</p>
+                    <p class="text-2xl">${m.title.toUpperCase()}</p>
                     <span class="text-xl text-blue-700 ml-4 font-bold">${m.day} ${m.time}</span>
                 `;
                 div.onclick = () => openDetails(m);
@@ -547,19 +557,29 @@
             if (!planned || !joined) return;
             planned.innerHTML = ''; joined.innerHTML = '';
 
-            Object.keys(moviesData).forEach(id => {
-                const m = { id, ...moviesData[id] };
+            const profileMovies = Object.keys(moviesData).map(id => ({ id, ...moviesData[id] }));
+
+            // Sort joined (seen) movies by user rating (best to worst)
+            const seenList = profileMovies.filter(m => {
                 const isCreator = m.creator === userName;
                 const isJoined = m.joined && m.joined[userName];
                 const status = getStatus(m.day, m.time);
-
-                // Movies only appear in GESEHEN if they are past
-                if (status === 'upcoming') {
-                    if (isCreator || isJoined) planned.appendChild(createProfileCard(m));
-                } else {
-                    if (isCreator || isJoined) joined.appendChild(createProfileCard(m));
-                }
+                return (status === 'past' && (isCreator || isJoined));
+            }).sort((a, b) => {
+                const rA = a.ratings?.[userName] ?? -1;
+                const rB = b.ratings?.[userName] ?? -1;
+                return rB - rA;
             });
+
+            const plannedList = profileMovies.filter(m => {
+                const isCreator = m.creator === userName;
+                const isJoined = m.joined && m.joined[userName];
+                const status = getStatus(m.day, m.time);
+                return (status === 'upcoming' && (isCreator || isJoined));
+            });
+
+            plannedList.forEach(m => planned.appendChild(createProfileCard(m)));
+            seenList.forEach(m => joined.appendChild(createProfileCard(m)));
         };
 
         const createProfileCard = (movie) => {
@@ -603,6 +623,7 @@
             const crewSection = document.getElementById('details-crew-section');
             const joinBtn = document.getElementById('details-join-btn');
             const delBtn = document.getElementById('details-delete-btn');
+            const saveRatingBtn = document.getElementById('details-save-rating-btn');
 
             document.getElementById('details-title').textContent = movie.title.toUpperCase();
             document.getElementById('details-time').textContent = `${movie.day} @ ${movie.time}`;
@@ -611,10 +632,14 @@
             const isJoined = movie.joined?.[userName];
             const isCreator = movie.creator === userName;
 
-            // Only allow rating if status is PAST
             if (status === 'past') {
                 ratingSection.classList.remove('hidden');
                 initRatingSlider(movie);
+                saveRatingBtn.onclick = async () => {
+                    await set(ref(rtdb, `apps/${appId}/movies/${movie.id}/ratings/${userName}`), tempRatingVal);
+                    showToast("BEWERTUNG GESPEICHERT!");
+                    modal.style.display = 'none';
+                };
             } else {
                 ratingSection.classList.add('hidden');
             }
@@ -658,12 +683,13 @@
             const fill = document.getElementById('rating-fill');
             const valLabel = document.getElementById('rating-val');
             
-            let currentRating = movie.ratings?.[userName] ?? 0;
+            tempRatingVal = movie.ratings?.[userName] ?? 0;
             const updateUI = (pct) => {
                 fill.style.width = pct + '%';
                 valLabel.textContent = pct + '%';
+                tempRatingVal = pct;
             };
-            updateUI(currentRating);
+            updateUI(tempRatingVal);
 
             const handleMove = (e) => {
                 const rect = slider.getBoundingClientRect();
@@ -671,19 +697,17 @@
                 const x = clientX - rect.left;
                 const pct = Math.max(0, Math.min(100, Math.round((x / rect.width) * 100)));
                 updateUI(pct);
-                return pct;
             };
 
             slider.onmousedown = slider.ontouchstart = (e) => {
                 e.preventDefault();
+                handleMove(e);
                 const moveListener = (ev) => handleMove(ev);
-                const upListener = async (ev) => {
+                const upListener = () => {
                     window.removeEventListener('mousemove', moveListener);
                     window.removeEventListener('touchmove', moveListener);
                     window.removeEventListener('mouseup', upListener);
                     window.removeEventListener('touchend', upListener);
-                    const finalVal = handleMove(ev);
-                    await set(ref(rtdb, `apps/${appId}/movies/${movie.id}/ratings/${userName}`), finalVal);
                 };
                 window.addEventListener('mousemove', moveListener);
                 window.addEventListener('touchmove', moveListener, { passive: false });

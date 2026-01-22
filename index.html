@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Film Festival Planner</title>
+    <title>Film Planer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -31,9 +31,10 @@
             overflow: hidden;
         }
 
+        /* 3D Pixel Style Cards */
         .pixel-card {
             background: white;
-            border: 4px solid var(--black);
+            border: 3px solid var(--black);
             box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
         }
 
@@ -43,6 +44,7 @@
             color: var(--primary);
         }
 
+        /* 3D Buttons */
         .pixel-btn {
             display: inline-block;
             font-family: 'Press Start 2P', cursive;
@@ -51,37 +53,47 @@
             box-shadow: 4px 4px 0px var(--black);
             cursor: pointer;
             text-align: center;
+            background: white;
+            transition: transform 0.05s, box-shadow 0.05s;
         }
 
         .pixel-btn:active:not(:disabled) {
             box-shadow: 0px 0px 0px var(--black);
-            transform: translate(3px, 3px);
+            transform: translate(4px, 4px);
         }
 
-        /* Tab Navigation Styling */
-        .nav-tab {
-            flex: 1;
-            padding: 10px 4px;
-            background: #ddd;
-            border: 3px solid black;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s steps(4);
+        /* Tab Navigation */
+        .tab-bar {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            background: white;
+            border-bottom: 3px solid black;
+            padding: 0 5px;
+            gap: 4px;
+        }
+
+        .nav-tab {
+            padding: 15px 5px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 7px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            border-bottom: none;
+            position: relative;
+            top: 3px;
+            color: #888;
+            flex: 1;
+            text-align: center;
+            transition: all 0.1s;
         }
 
         .nav-tab.active {
             background: white;
-            border-bottom: none;
-            transform: scale(1.1) translateY(4px);
-            z-index: 10;
-            font-size: 9px;
-            border-width: 4px;
-            box-shadow: 0px -4px 0px white;
+            border: 3px solid black;
+            border-bottom: 3px solid white;
+            color: var(--primary);
+            font-size: 8px;
+            top: 0px;
+            z-index: 5;
         }
 
         .pixel-input, select {
@@ -96,58 +108,57 @@
         }
 
         .movie-item {
-            border: 4px solid var(--black);
-            margin-bottom: 15px;
-            padding: 15px;
+            border: 3px solid var(--black);
+            margin-bottom: 12px;
+            padding: 12px 15px;
             cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             background: white;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
         }
 
-        .upcoming { background-color: #e6ffed; border-color: var(--success); box-shadow: 4px 4px 0px var(--success); }
-        .past { background-color: #fff0f0; border-color: var(--danger); box-shadow: 4px 4px 0px var(--danger); opacity: 0.8; }
+        .movie-item:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px transparent;
+        }
 
-        .rating-bar-container {
-            width: 100%;
-            height: 35px;
-            background: #fff;
-            border: 3px solid #000;
-            position: relative;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-        .rating-bar-fill {
-            height: 100%;
-            background: var(--success);
-            width: 0%;
-        }
-        .rating-text {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            top: 5px;
-            font-weight: bold;
-            pointer-events: none;
+        .past { 
+            background-color: #f1f5f9; 
+            border-color: #94a3b8; 
+            color: #94a3b8; 
+            opacity: 0.6; 
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05); 
         }
 
         #add-movie-fab {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
+            bottom: 25px;
+            right: 25px;
+            width: 55px;
+            height: 55px;
             background: var(--primary);
             color: white;
-            border: 4px solid #000;
+            border: 3px solid #000;
             box-shadow: 4px 4px 0px #000;
-            font-size: 24px;
+            font-size: 22px;
             z-index: 100;
             font-family: 'Press Start 2P', cursive;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #add-movie-fab:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px transparent;
         }
 
         .modal {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.6);
             display: none;
             align-items: center;
             justify-content: center;
@@ -155,45 +166,88 @@
             padding: 20px;
         }
 
-        #autocomplete div:hover {
-            background: var(--primary);
-            color: white;
+        /* Profile Draggable Cards */
+        .draggable-movie {
+            position: relative;
+            border: 3px solid black;
+            background: white;
+            overflow: hidden;
+            user-select: none;
+            touch-action: none;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            margin-bottom: 12px;
         }
 
-        .profile-movie-card {
-            border: 3px solid black;
-            padding: 12px;
-            background: white;
-            cursor: pointer;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
-            transition: transform 0.1s;
+        .rating-fill-bg {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            background: rgba(45, 164, 78, 0.2);
+            z-index: 1;
+            pointer-events: none;
         }
-        .profile-movie-card:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .delete-icon {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--danger);
+            font-weight: bold;
+            font-size: 24px;
+            z-index: 20;
+            cursor: pointer;
+            pointer-events: auto;
+            background: white;
+            border: 2px solid transparent;
+        }
+        
+        .delete-icon:hover {
+            border-color: var(--danger);
+            background-color: #fff1f2;
         }
 
         .prix-rank {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: black;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
+            font-size: 10px;
             border: 2px solid white;
             box-shadow: 3px 3px 0px black;
+        }
+
+        .grid-bg {
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
     </style>
 </head>
 <body class="flex flex-col">
 
     <!-- Login View -->
-    <div id="login-view" class="fixed inset-0 bg-white z-[300] flex items-center justify-center p-6">
+    <div id="login-view" class="fixed inset-0 bg-white z-[300] flex items-center justify-center p-6 grid-bg">
         <div class="pixel-card p-8 w-full max-w-xs text-center">
-            <h1 class="pixel-header mb-6" style="font-size: 14px;">FILM FESTIVAL</h1>
+            <h1 class="pixel-header mb-8" style="font-size: 14px; line-height: 1.5;">PRIX DU ASS</h1>
             <input type="text" id="name-input" placeholder="DEIN NAME..." class="pixel-input p-3 mb-6">
             <button id="login-btn" class="pixel-btn w-full bg-blue-500 text-white py-4">START</button>
         </div>
@@ -201,116 +255,114 @@
 
     <!-- Main View -->
     <div id="main-view" class="hidden flex flex-col h-full">
-        <!-- Tab Header -->
-        <header class="bg-slate-200 border-b-4 border-black px-2 pt-4 flex items-end gap-1 z-20">
-            <div id="tab-planer" class="nav-tab active">PLANER</div>
-            <div id="tab-prix" class="nav-tab">PRIX</div>
-            <div id="tab-profil" class="nav-tab">PROFIL</div>
+        <header class="bg-white z-20">
+            <div class="tab-bar">
+                <div id="tab-planer" class="nav-tab active">PLANER</div>
+                <div id="tab-prix" class="nav-tab">PRIX DU ASS</div>
+                <div id="tab-profil" class="nav-tab">PROFIL</div>
+            </div>
         </header>
 
-        <!-- Planning Board -->
-        <div id="board-container" class="flex-1 overflow-y-auto p-4 space-y-4">
-            <p class="text-center mt-10 animate-pulse text-2xl font-bold">LADE FILME...</p>
+        <!-- Section: Planer -->
+        <div id="planer-container" class="flex-1 overflow-y-auto p-4 space-y-2">
+            <p class="text-center mt-10 animate-pulse text-xl">LADE FILME...</p>
         </div>
 
-        <!-- Prix du Public View -->
+        <!-- Section: Prix -->
         <div id="prix-container" class="hidden flex-1 overflow-y-auto p-4 space-y-4">
-            <div class="pixel-card p-4 mb-6 bg-yellow-50">
+            <div class="pixel-card p-4 mb-2 bg-yellow-50">
                 <h2 class="pixel-header text-center" style="color: black;">PRIX DU PUBLIC</h2>
-                <p class="text-center text-xl mt-2 font-bold">Die am besten bewerteten Filme</p>
+                <p class="text-center text-lg mt-1">Beliebteste Filme</p>
             </div>
-            <div id="prix-list" class="space-y-4">
-                <!-- Ranked movies go here -->
-            </div>
+            <div id="prix-list" class="space-y-3"></div>
         </div>
 
-        <!-- Profile View -->
-        <div id="profile-container" class="hidden flex-1 overflow-y-auto p-4 space-y-6">
-            <div class="pixel-card p-4">
-                <p class="pixel-header text-[10px] mb-4">MEINE AKTIVEN PLÄNE</p>
-                <div id="my-movies-list" class="space-y-3 text-xl"></div>
+        <!-- Section: Profil -->
+        <div id="profil-container" class="hidden flex-1 overflow-y-auto p-4 space-y-6 pb-20">
+            <div>
+                <p class="pixel-header text-[8px] mb-3">MEINE AKTIVEN PLÄNE</p>
+                <div id="my-movies-list" class="space-y-3"></div>
             </div>
-            <div class="pixel-card p-4">
-                <p class="pixel-header text-[10px] mb-4">GESEHEN / BEWERTEN</p>
-                <div id="joined-movies-list" class="space-y-3 text-xl"></div>
+            <div>
+                <p class="pixel-header text-[8px] mb-3">GESEHEN / RATEN (ZIEHEN)</p>
+                <div id="joined-movies-list" class="space-y-3"></div>
+                <p class="text-xs italic text-slate-500 mt-4 text-center">* noch nicht bewertet</p>
             </div>
-            <button id="logout-btn" class="pixel-btn bg-red-500 text-white w-full py-4 mt-6">ABMELDEN</button>
+            <div class="px-2">
+                <button id="logout-btn" class="pixel-btn border-red-500 text-red-600 w-full py-3 mt-6">LOGOUT</button>
+            </div>
         </div>
     </div>
 
     <button id="add-movie-fab" class="hidden">+</button>
 
-    <!-- Movie Entry Modal -->
+    <!-- Modal: Create/Edit Movie -->
     <div id="movie-modal" class="modal">
         <div class="pixel-card p-6 w-full max-w-sm">
             <div class="flex justify-between mb-4">
                 <p id="modal-title" class="pixel-header">NEUER FILM</p>
-                <button class="close-modal text-2xl font-bold">&times;</button>
+                <button class="close-modal text-2xl">&times;</button>
             </div>
             <form id="movie-form" class="space-y-4">
                 <div class="relative">
-                    <label class="block text-xs font-bold mb-1">FILM TITEL</label>
-                    <input type="text" id="m-title" placeholder="FILM NAME..." class="pixel-input p-2" required autocomplete="off">
-                    <div id="autocomplete" class="absolute left-0 right-0 bg-white border-2 border-black z-50 hidden max-h-32 overflow-y-auto"></div>
+                    <label class="block text-xs mb-1">TITEL</label>
+                    <input type="text" id="m-title" placeholder="FILM..." class="pixel-input p-2" required autocomplete="off">
+                    <div id="autocomplete" class="absolute left-0 right-0 bg-white border-2 border-black z-50 hidden max-h-32 overflow-y-auto shadow-xl"></div>
                 </div>
                 <div class="flex gap-2">
                     <div class="flex-1">
-                        <label class="block text-xs font-bold mb-1">TAG</label>
+                        <label class="block text-xs mb-1">TAG</label>
                         <select id="m-day" class="p-2"></select>
                     </div>
                     <div class="w-1/3">
-                        <label class="block text-xs font-bold mb-1">ZEIT (24H)</label>
+                        <label class="block text-xs mb-1">ZEIT</label>
                         <input type="time" id="m-time" class="pixel-input p-2" required>
                     </div>
                 </div>
-                <button type="submit" class="pixel-btn w-full bg-blue-500 text-white py-3">SPEICHERN</button>
-                <button type="button" id="delete-movie" class="hidden w-full text-red-600 font-bold py-2 mt-2 underline">LÖSCHEN</button>
+                <button type="submit" class="pixel-btn w-full bg-blue-500 text-white py-4 mt-2">SAVE</button>
+                <button type="button" id="delete-movie-modal-btn" class="hidden w-full text-red-600 font-bold py-2 mt-2 underline">LÖSCHEN</button>
             </form>
         </div>
     </div>
 
-    <!-- Viewer/Join Details Modal -->
+    <!-- Modal: Info/Join -->
     <div id="details-modal" class="modal">
         <div class="pixel-card p-6 w-full max-w-sm">
             <div class="flex justify-between mb-4">
-                <p class="pixel-header">FILM DETAILS</p>
-                <button class="close-modal text-2xl font-bold">&times;</button>
+                <p class="pixel-header">INFO</p>
+                <button class="close-modal text-2xl">&times;</button>
             </div>
             <div class="space-y-4">
                 <div>
-                    <h3 id="details-title" class="text-3xl font-bold leading-none mb-1"></h3>
-                    <p id="details-time" class="text-xl text-blue-600 font-bold"></p>
+                    <h3 id="details-title" class="text-3xl leading-none mb-1"></h3>
+                    <p id="details-time" class="text-xl text-blue-600"></p>
                 </div>
-                <div class="bg-slate-50 border-2 border-black p-3">
-                    <p class="text-xs uppercase font-bold text-slate-500">Organisator</p>
-                    <p id="details-creator" class="text-xl font-bold"></p>
+                <div class="border-2 border-black p-3 bg-slate-50 shadow-[4px_4px_0px_rgba(0,0,0,0.05)]">
+                    <p class="text-xs uppercase text-slate-500">Von</p>
+                    <p id="details-creator" class="text-xl"></p>
                 </div>
                 <div>
-                    <p class="text-xs uppercase font-bold text-slate-500 mb-1">Dabei:</p>
+                    <p class="text-xs uppercase text-slate-500 mb-1">Dabei:</p>
                     <div id="details-joined-list" class="flex flex-wrap gap-2 text-sm"></div>
                 </div>
-                <button id="details-join-btn" class="pixel-btn w-full py-4 text-white"></button>
+                <button id="details-join-btn" class="pixel-btn w-full py-4 mt-2"></button>
             </div>
         </div>
     </div>
 
-    <!-- Rating Modal -->
-    <div id="rate-modal" class="modal">
-        <div class="pixel-card p-6 w-full max-w-sm">
-            <p id="rate-movie-name" class="pixel-header mb-4"></p>
-            <div class="rating-bar-container" id="rating-slider">
-                <div class="rating-bar-fill" id="rating-fill"></div>
-                <div class="rating-text" id="rating-val">0%</div>
+    <!-- Modal: Confirmation (Replaces Browser confirm) -->
+    <div id="confirm-modal" class="modal" style="z-index: 500;">
+        <div class="pixel-card p-6 w-full max-w-sm text-center">
+            <p id="confirm-text" class="pixel-header mb-6" style="color: black; font-size: 12px; line-height: 1.4;">WIRKLICH LÖSCHEN?</p>
+            <div class="flex gap-4">
+                <button id="confirm-yes" class="pixel-btn flex-1 bg-red-500 text-white py-3">JA</button>
+                <button id="confirm-no" class="pixel-btn flex-1 py-3">NEIN</button>
             </div>
-            <p class="text-sm italic mb-4">Ziehen zum Bewerten (0-100%)</p>
-            <button id="save-rating" class="pixel-btn w-full bg-green-600 text-white py-3">BEWERTEN</button>
-            <button type="button" class="close-modal w-full py-2 mt-2">ZURÜCK</button>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 border-2 border-white text-sm hidden z-[500]"></div>
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 border-2 border-white text-sm hidden z-[600]"></div>
 
-    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -333,41 +385,44 @@
 
         let userName = localStorage.getItem('ff_user');
         let moviesData = {}; 
-        let editingId = null;
-        let ratingPercent = 0;
-        let ratingTargetId = null;
+        let currentEditingId = null;
 
-        const WEEKDAYS = ["SO", "MO", "DI", "MI", "DO", "FR", "SA"];
+        const FEST_SEQUENCE = ["TH", "FR", "SA", "SO", "MO", "DI", "MI"];
 
-        const getDayLabels = () => {
-            const labels = [];
-            const now = new Date();
-            for (let i = 0; i < 7; i++) {
-                const d = new Date(now);
-                d.setDate(now.getDate() + i);
-                const dayCode = WEEKDAYS[d.getDay()];
-                const label = i === 0 ? "Heute" : (i === 1 ? "Morgen" : dayCode);
-                labels.push({ code: dayCode, label: label });
-            }
-            return labels;
+        // --- Custom Confirmation Logic ---
+        let confirmAction = null;
+        const askConfirm = (msg, action) => {
+            document.getElementById('confirm-text').textContent = msg.toUpperCase();
+            document.getElementById('confirm-modal').style.display = 'flex';
+            confirmAction = action;
         };
 
-        const renderDayOptions = () => {
-            const select = document.getElementById('m-day');
-            const labels = getDayLabels();
-            select.innerHTML = labels.map(l => `<option value="${l.code}">${l.label} (${l.code})</option>`).join('');
+        document.getElementById('confirm-yes').onclick = () => {
+            if (confirmAction) confirmAction();
+            document.getElementById('confirm-modal').style.display = 'none';
+        };
+        document.getElementById('confirm-no').onclick = () => {
+            document.getElementById('confirm-modal').style.display = 'none';
+        };
+
+        const getTodayCode = () => {
+            const map = ["SO", "MO", "DI", "MI", "TH", "FR", "SA"];
+            return map[new Date().getDay()];
         };
 
         const getStatus = (dayCode, time) => {
-            const now = new Date();
-            const [h, m] = time.split(':').map(Number);
-            const movieDate = new Date();
-            let dayOffset = WEEKDAYS.indexOf(dayCode) - now.getDay();
-            if (dayOffset < 0) dayOffset += 7;
-            movieDate.setDate(now.getDate() + dayOffset);
-            movieDate.setHours(h, m, 0, 0);
-            const isPast = now.getTime() > (movieDate.getTime() + 15 * 60000);
-            return isPast ? 'past' : 'upcoming';
+            const todayCode = getTodayCode();
+            const todayIdx = FEST_SEQUENCE.indexOf(todayCode);
+            const movieIdx = FEST_SEQUENCE.indexOf(dayCode);
+            if (movieIdx < todayIdx) return 'past';
+            if (movieIdx === todayIdx) {
+                const now = new Date();
+                const [h, m] = time.split(':').map(Number);
+                const movieTime = new Date();
+                movieTime.setHours(h, m, 0, 0);
+                if (now.getTime() > (movieTime.getTime() + 15 * 60000)) return 'past';
+            }
+            return 'upcoming';
         };
 
         const showToast = (msg) => {
@@ -388,37 +443,35 @@
                 document.getElementById('add-movie-fab').classList.remove('hidden');
                 renderDayOptions();
                 startListening();
-            } catch (e) {
-                showToast("AUTH FEHLER!");
-            }
+            } catch (e) { showToast("AUTH ERROR"); }
         };
 
         document.getElementById('login-btn').onclick = handleLogin;
-        if (userName) {
-            document.getElementById('name-input').value = userName;
-            handleLogin();
-        }
+        if (userName) handleLogin();
 
-        document.getElementById('logout-btn').onclick = async () => {
-            await signOut(auth);
+        document.getElementById('logout-btn').onclick = () => {
+            signOut(auth);
             localStorage.removeItem('ff_user');
             location.reload();
         };
 
+        const renderDayOptions = () => {
+            const select = document.getElementById('m-day');
+            select.innerHTML = FEST_SEQUENCE.map(d => `<option value="${d}">${d}</option>`).join('');
+        };
+
         const switchTab = (tab) => {
-            const sections = {
-                'planer': 'board-container',
-                'prix': 'prix-container',
-                'profil': 'profile-container'
-            };
-            Object.keys(sections).forEach(key => {
-                document.getElementById(sections[key]).classList.add('hidden');
-                document.getElementById(`tab-${key}`).classList.remove('active');
+            ['planer', 'prix', 'profil'].forEach(t => {
+                const container = document.getElementById(`${t}-container`);
+                const tabEl = document.getElementById(`tab-${t}`);
+                if (container) container.classList.add('hidden');
+                if (tabEl) tabEl.classList.remove('active');
             });
-            document.getElementById(sections[tab]).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            if (tab === 'planer') document.getElementById('add-movie-fab').classList.remove('hidden');
-            else document.getElementById('add-movie-fab').classList.add('hidden');
+            const activeContainer = document.getElementById(`${tab}-container`);
+            const activeTab = document.getElementById(`tab-${tab}`);
+            if (activeContainer) activeContainer.classList.remove('hidden');
+            if (activeTab) activeTab.classList.add('active');
+            document.getElementById('add-movie-fab').classList.toggle('hidden', tab !== 'planer');
         };
 
         document.getElementById('tab-planer').onclick = () => switchTab('planer');
@@ -426,176 +479,199 @@
         document.getElementById('tab-profil').onclick = () => switchTab('profil');
 
         const startListening = () => {
-            const moviesRef = ref(rtdb, `apps/${appId}/movies`);
-            onValue(moviesRef, (snapshot) => {
-                moviesData = snapshot.val() || {};
+            onValue(ref(rtdb, `apps/${appId}/movies`), (snap) => {
+                moviesData = snap.val() || {};
                 renderUI();
             });
         };
 
         const calculateAverage = (ratings) => {
             if (!ratings) return 0;
-            const values = Object.values(ratings);
-            if (values.length === 0) return 0;
-            const sum = values.reduce((a, b) => a + b, 0);
-            return Math.round(sum / values.length);
+            const vals = Object.values(ratings);
+            return vals.length ? Math.round(vals.reduce((a,b) => a+b, 0) / vals.length) : 0;
         };
 
         const renderUI = () => {
-            const board = document.getElementById('board-container');
+            const planerBoard = document.getElementById('planer-container');
             const prixList = document.getElementById('prix-list');
-            board.innerHTML = '';
-            prixList.innerHTML = '';
+            if (!planerBoard || !prixList) return;
+            planerBoard.innerHTML = ''; prixList.innerHTML = '';
 
-            const moviesList = Object.keys(moviesData).map(id => ({ id, ...moviesData[id] }));
-            const dayOrder = getDayLabels().map(l => l.code);
+            const list = Object.keys(moviesData).map(id => ({ id, ...moviesData[id] }));
 
-            const sortedPlaner = [...moviesList].sort((a, b) => {
-                const sA = getStatus(a.day, a.time);
-                const sB = getStatus(b.day, b.time);
+            // Planer Sort
+            const sortedPlaner = [...list].sort((a,b) => {
+                const sA = getStatus(a.day, a.time), sB = getStatus(b.day, b.time);
                 if (sA !== sB) return sA === 'upcoming' ? -1 : 1;
-                const dIdxA = dayOrder.indexOf(a.day);
-                const dIdxB = dayOrder.indexOf(b.day);
+                const dIdxA = FEST_SEQUENCE.indexOf(a.day), dIdxB = FEST_SEQUENCE.indexOf(b.day);
                 if (dIdxA !== dIdxB) return dIdxA - dIdxB;
                 return a.time.localeCompare(b.time);
             });
 
-            const sortedPrix = [...moviesList]
-                .filter(m => m.ratings && Object.keys(m.ratings).length > 0)
-                .map(m => ({ ...m, avg: calculateAverage(m.ratings), voteCount: Object.keys(m.ratings).length }))
-                .sort((a, b) => b.avg - a.avg);
-
-            if (sortedPlaner.length === 0) {
-                board.innerHTML = `<p class="text-center mt-10 text-slate-400">Keine Filme geplant.</p>`;
-            }
-
             sortedPlaner.forEach(m => {
-                const status = getStatus(m.day, m.time);
-                const rating = m.ratings?.[userName];
                 const div = document.createElement('div');
-                div.className = `movie-item ${status}`;
+                div.className = `movie-item ${getStatus(m.day, m.time)}`;
                 div.innerHTML = `
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-bold text-lg text-blue-700">${m.day} ${m.time}</span>
-                        ${rating !== undefined ? `<span class="text-blue-700 font-bold bg-blue-50 px-2 border-2 border-black">${rating}%</span>` : ''}
-                    </div>
-                    <p class="text-3xl font-bold leading-tight">${m.title.toUpperCase()}</p>
-                    <div class="flex justify-between text-base mt-3 font-bold border-t-2 border-black pt-2 opacity-80">
-                        <span>VON: ${m.creator.toUpperCase()}</span>
-                        <span>${Object.keys(m.joined || {}).length + 1} DABEI</span>
-                    </div>
+                    <p class="text-2xl">${m.title.toUpperCase()}</p>
+                    <span class="text-lg text-blue-700 ml-4">${m.day} ${m.time}</span>
                 `;
                 div.onclick = () => openDetails(m);
-                board.appendChild(div);
+                planerBoard.appendChild(div);
             });
 
-            if (sortedPrix.length === 0) {
-                prixList.innerHTML = `<div class="pixel-card p-6 text-center italic text-slate-400">Noch keine Bewertungen vorhanden.</div>`;
-            } else {
-                sortedPrix.forEach((m, idx) => {
-                    const div = document.createElement('div');
-                    div.className = "pixel-card p-4 flex items-center gap-4 bg-white";
-                    div.innerHTML = `
-                        <div class="prix-rank">${idx + 1}</div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-bold leading-none">${m.title.toUpperCase()}</h3>
-                            <p class="text-xs font-bold text-slate-500 mt-1">${m.voteCount} Stimme(n)</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-2xl font-bold text-blue-600">${m.avg}%</p>
-                            <div class="w-16 h-2 bg-slate-200 border border-black overflow-hidden mt-1">
-                                <div class="h-full bg-blue-500" style="width: ${m.avg}%"></div>
-                            </div>
-                        </div>
-                    `;
-                    prixList.appendChild(div);
-                });
-            }
+            // Prix Sort
+            const ranked = list.filter(m => m.ratings && Object.keys(m.ratings).length > 0)
+                .map(m => ({ ...m, avg: calculateAverage(m.ratings), count: Object.keys(m.ratings).length }))
+                .sort((a,b) => b.avg - a.avg);
+
+            if (!ranked.length) prixList.innerHTML = '<p class="text-center italic mt-10">Noch keine Bewertungen.</p>';
+            ranked.forEach((m, idx) => {
+                const d = document.createElement('div');
+                d.className = "pixel-card p-4 flex items-center gap-4 bg-white mb-2";
+                d.innerHTML = `
+                    <div class="prix-rank">${idx+1}</div>
+                    <div class="flex-1"><p class="text-xl">${m.title.toUpperCase()}</p><p class="text-[8px] opacity-60">${m.count} Stimmen</p></div>
+                    <div class="text-right"><p class="text-2xl text-blue-600">${m.avg}%</p></div>
+                `;
+                prixList.appendChild(d);
+            });
+
             renderProfile();
         };
 
         const renderProfile = () => {
             const planned = document.getElementById('my-movies-list');
             const joined = document.getElementById('joined-movies-list');
+            if (!planned || !joined) return;
             planned.innerHTML = ''; joined.innerHTML = '';
 
             Object.keys(moviesData).forEach(id => {
                 const m = { id, ...moviesData[id] };
                 const isCreator = m.creator === userName;
                 const isJoined = m.joined && m.joined[userName];
-                const movieStatus = getStatus(m.day, m.time);
+                const status = getStatus(m.day, m.time);
 
-                // Show only upcoming plans in "MEINE FILME"
-                if (isCreator && movieStatus === 'upcoming') {
-                    const div = document.createElement('div');
-                    div.className = "profile-movie-card";
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-base font-bold text-slate-500">${m.day} ${m.time}</p>
-                                <p class="text-2xl font-bold">${m.title.toUpperCase()}</p>
-                            </div>
-                        </div>
-                    `;
-                    div.onclick = () => openDetails(m);
-                    planned.appendChild(div);
+                if (isCreator && status === 'upcoming') {
+                    planned.appendChild(createProfileCard(m, false));
                 }
-
-                // Show movies to rate in "GESEHEN": joined movies OR your own finished movies
-                if ((isJoined) || (isCreator && movieStatus === 'past')) {
-                    const div = document.createElement('div');
-                    const score = m.ratings?.[userName];
-                    div.className = "profile-movie-card";
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-base font-bold text-slate-500">${m.day} ${m.time}</p>
-                                <p class="text-2xl font-bold">${m.title.toUpperCase()}</p>
-                            </div>
-                            <div class="text-center bg-green-50 p-2 border-2 border-green-800">
-                                <p class="text-sm font-bold text-green-700">${score !== undefined ? score+'%' : 'BEWERTEN'}</p>
-                            </div>
-                        </div>
-                    `;
-                    div.onclick = () => openRating(m);
-                    joined.appendChild(div);
+                if (isJoined || (isCreator && status === 'past')) {
+                    joined.appendChild(createProfileCard(m, true));
                 }
             });
+        };
+
+        const createProfileCard = (movie, isSeen) => {
+            const card = document.createElement('div');
+            card.className = "draggable-movie";
+            const rating = movie.ratings?.[userName] ?? null;
             
-            if (planned.innerHTML === '') planned.innerHTML = '<p class="text-slate-400 italic text-center">Keine aktiven Pläne.</p>';
-            if (joined.innerHTML === '') joined.innerHTML = '<p class="text-slate-400 italic text-center">Keine gesehenen Filme.</p>';
+            card.innerHTML = `
+                <div class="delete-icon" title="Löschen">&times;</div>
+                <div class="rating-fill-bg" style="width: ${rating ?? 0}%"></div>
+                <div class="card-content">
+                    <div>
+                        <p class="text-xs text-slate-500">${movie.day} ${movie.time}</p>
+                        <p class="text-2xl">${movie.title.toUpperCase()}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-lg text-green-700">${rating !== null ? rating + '%' : '*'}</p>
+                    </div>
+                </div>
+            `;
+
+            // DELETE LOGIC
+            card.querySelector('.delete-icon').onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                askConfirm(`"${movie.title.toUpperCase()}" löschen?`, () => {
+                    if (movie.creator === userName) {
+                        remove(ref(rtdb, `apps/${appId}/movies/${movie.id}`))
+                            .then(() => showToast("GELÖSCHT"))
+                            .catch(() => showToast("DELETE ERROR"));
+                    } else {
+                        remove(ref(rtdb, `apps/${appId}/movies/${movie.id}/joined/${userName}`))
+                            .then(() => showToast("ENTFERNT"))
+                            .catch(() => showToast("REMOVE ERROR"));
+                    }
+                });
+            };
+
+            if (isSeen) {
+                let isDragging = false;
+                const updateRating = (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                    if (clientX === undefined) return;
+                    const x = clientX - rect.left;
+                    const pct = Math.max(0, Math.min(100, Math.round((x / rect.width) * 100)));
+                    card.querySelector('.rating-fill-bg').style.width = pct + '%';
+                    card.querySelector('.text-green-700').textContent = pct + '%';
+                    return pct;
+                };
+
+                const start = (e) => {
+                    if (e.target.closest('.delete-icon')) return;
+                    isDragging = true;
+                };
+                
+                const end = async (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    const clientEvent = e.changedTouches ? e.changedTouches[0] : e;
+                    const final = updateRating(clientEvent);
+                    if (final !== undefined) {
+                        await set(ref(rtdb, `apps/${appId}/movies/${movie.id}/ratings/${userName}`), final);
+                    }
+                };
+
+                card.onmousedown = start;
+                card.ontouchstart = start;
+                window.addEventListener('mousemove', (e) => isDragging && updateRating(e));
+                window.addEventListener('touchmove', (e) => { if(isDragging) { e.preventDefault(); updateRating(e); } }, { passive: false });
+                window.addEventListener('mouseup', end);
+                window.addEventListener('touchend', end);
+            } else {
+                card.onclick = (e) => {
+                    if (e.target.closest('.delete-icon')) return;
+                    currentEditingId = movie.id;
+                    document.getElementById('modal-title').textContent = "EDIT";
+                    document.getElementById('m-title').value = movie.title;
+                    document.getElementById('m-day').value = movie.day;
+                    document.getElementById('m-time').value = movie.time;
+                    document.getElementById('delete-movie-modal-btn').classList.remove('hidden');
+                    document.getElementById('movie-modal').style.display = 'flex';
+                };
+            }
+            return card;
         };
 
         const openDetails = (movie) => {
             if (movie.creator === userName) {
-                editingId = movie.id;
-                document.getElementById('modal-title').textContent = "BEARBEITEN";
+                currentEditingId = movie.id;
+                document.getElementById('modal-title').textContent = "EDIT";
                 document.getElementById('m-title').value = movie.title;
                 document.getElementById('m-day').value = movie.day;
                 document.getElementById('m-time').value = movie.time;
-                document.getElementById('delete-movie').classList.remove('hidden');
+                document.getElementById('delete-movie-modal-btn').classList.remove('hidden');
                 document.getElementById('movie-modal').style.display = 'flex';
             } else {
                 const modal = document.getElementById('details-modal');
-                const title = document.getElementById('details-title');
-                const time = document.getElementById('details-time');
-                const creator = document.getElementById('details-creator');
-                const joinList = document.getElementById('details-joined-list');
-                const joinBtn = document.getElementById('details-join-btn');
-                title.textContent = movie.title.toUpperCase();
-                time.textContent = `${movie.day} @ ${movie.time}`;
-                creator.textContent = movie.creator;
-                const joinedNames = movie.joined ? Object.keys(movie.joined) : [];
-                joinList.innerHTML = joinedNames.length > 0 
-                    ? joinedNames.map(n => `<span class="bg-slate-200 px-2 py-0.5 border border-black">${n}</span>`).join('')
-                    : '<span class="italic text-slate-400">Noch niemand dabei</span>';
-                const isJoined = movie.joined && movie.joined[userName];
-                joinBtn.textContent = isJoined ? "AUSTRETEN" : "JETZT BEITRETEN";
-                joinBtn.style.backgroundColor = isJoined ? "var(--danger)" : "var(--success)";
-                joinBtn.onclick = () => {
-                    const joinRef = ref(rtdb, `apps/${appId}/movies/${movie.id}/joined/${userName}`);
-                    if (isJoined) remove(joinRef);
-                    else set(joinRef, true);
+                const isJoined = movie.joined?.[userName];
+                document.getElementById('details-title').textContent = movie.title.toUpperCase();
+                document.getElementById('details-time').textContent = `${movie.day} @ ${movie.time}`;
+                document.getElementById('details-creator').textContent = movie.creator;
+                const joined = movie.joined ? Object.keys(movie.joined) : [];
+                document.getElementById('details-joined-list').innerHTML = joined.length 
+                    ? joined.map(n => `<span class="bg-slate-100 border-2 border-black px-1 shadow-[2px_2px_0px_rgba(0,0,0,0.05)]">${n}</span>`).join('')
+                    : 'Keiner dabei.';
+
+                const btn = document.getElementById('details-join-btn');
+                btn.textContent = isJoined ? "AUSTRETEN" : "BEITRETEN";
+                btn.style.color = isJoined ? "var(--danger)" : "var(--success)";
+                btn.onclick = () => {
+                    const r = ref(rtdb, `apps/${appId}/movies/${movie.id}/joined/${userName}`);
+                    isJoined ? remove(r) : set(r, true);
                     modal.style.display = 'none';
                 };
                 modal.style.display = 'flex';
@@ -603,10 +679,10 @@
         };
 
         document.getElementById('add-movie-fab').onclick = () => {
-            editingId = null;
+            currentEditingId = null;
             document.getElementById('modal-title').textContent = "NEUER FILM";
             document.getElementById('movie-form').reset();
-            document.getElementById('delete-movie').classList.add('hidden');
+            document.getElementById('delete-movie-modal-btn').classList.add('hidden');
             document.getElementById('movie-modal').style.display = 'flex';
         };
 
@@ -616,84 +692,44 @@
 
         document.getElementById('movie-form').onsubmit = async (e) => {
             e.preventDefault();
-            const title = document.getElementById('m-title').value.trim();
-            const day = document.getElementById('m-day').value;
-            const time = document.getElementById('m-time').value;
+            const data = {
+                title: document.getElementById('m-title').value.trim(),
+                day: document.getElementById('m-day').value,
+                time: document.getElementById('m-time').value,
+            };
             try {
-                if (editingId) {
-                    const movieRef = ref(rtdb, `apps/${appId}/movies/${editingId}`);
-                    await update(movieRef, { title, day, time });
+                if (currentEditingId) {
+                    await update(ref(rtdb, `apps/${appId}/movies/${currentEditingId}`), data);
                 } else {
-                    const moviesRef = ref(rtdb, `apps/${appId}/movies`);
-                    await push(moviesRef, {
-                        title, day, time, 
-                        creator: userName, 
-                        createdAt: Date.now(),
-                        joined: {},
-                        ratings: {}
-                    });
+                    await push(ref(rtdb, `apps/${appId}/movies`), { ...data, creator: userName, joined: {}, ratings: {} });
                 }
                 document.getElementById('movie-modal').style.display = 'none';
-                showToast("GESPEICHERT!");
-            } catch (e) {
-                showToast("SPEICHERFEHLER!");
+                showToast("SAVE SUCCESS");
+            } catch (e) { showToast("SAVE ERROR"); }
+        };
+
+        // Modal Delete Fix
+        document.getElementById('delete-movie-modal-btn').onclick = () => {
+            if (currentEditingId) {
+                askConfirm("Wirklich löschen?", () => {
+                    remove(ref(rtdb, `apps/${appId}/movies/${currentEditingId}`))
+                        .then(() => {
+                            document.getElementById('movie-modal').style.display = 'none';
+                            showToast("GELÖSCHT");
+                        })
+                        .catch(() => showToast("DELETE ERROR"));
+                });
             }
-        };
-
-        document.getElementById('delete-movie').onclick = async () => {
-            if (confirm("FILM LÖSCHEN?")) {
-                await remove(ref(rtdb, `apps/${appId}/movies/${editingId}`));
-                document.getElementById('movie-modal').style.display = 'none';
-            }
-        };
-
-        const openRating = (movie) => {
-            ratingTargetId = movie.id;
-            document.getElementById('rate-movie-name').textContent = movie.title.toUpperCase();
-            const current = movie.ratings?.[userName] || 0;
-            updateSlider(current);
-            document.getElementById('rate-modal').style.display = 'flex';
-        };
-
-        const updateSlider = (val) => {
-            ratingPercent = Math.max(0, Math.min(100, val));
-            document.getElementById('rating-fill').style.width = ratingPercent + '%';
-            document.getElementById('rating-val').textContent = ratingPercent + '%';
-        };
-
-        const handleSliderInput = (e) => {
-            const rect = document.getElementById('rating-slider').getBoundingClientRect();
-            const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
-            const x = clientX - rect.left;
-            updateSlider(Math.round((x / rect.width) * 100));
-        };
-
-        document.getElementById('rating-slider').onmousedown = (e) => {
-            handleSliderInput(e);
-            window.onmousemove = handleSliderInput;
-            window.onmouseup = () => window.onmousemove = null;
-        };
-
-        document.getElementById('rating-slider').ontouchmove = (e) => {
-            e.preventDefault();
-            handleSliderInput(e);
-        };
-
-        document.getElementById('save-rating').onclick = async () => {
-            const ratingRef = ref(rtdb, `apps/${appId}/movies/${ratingTargetId}/ratings/${userName}`);
-            await set(ratingRef, ratingPercent);
-            document.getElementById('rate-modal').style.display = 'none';
-            showToast("BEWERTET!");
         };
 
         document.getElementById('m-title').oninput = (e) => {
             const val = e.target.value.toLowerCase();
             const box = document.getElementById('autocomplete');
             if (!val) return box.classList.add('hidden');
-            const existingTitles = [...new Set(Object.values(moviesData).map(m => m.title))];
-            const matches = existingTitles.filter(t => t.toLowerCase().includes(val));
+            const titles = [...new Set(Object.values(moviesData).map(m => m.title))];
+            const matches = titles.filter(t => t.toLowerCase().includes(val));
             if (matches.length) {
-                box.innerHTML = matches.map(t => `<div class="p-2 border-b border-slate-200 cursor-pointer text-xl font-bold">${t.toUpperCase()}</div>`).join('');
+                box.innerHTML = matches.map(t => `<div class="p-2 border-b border-slate-100 cursor-pointer text-xl">${t.toUpperCase()}</div>`).join('');
                 box.classList.remove('hidden');
                 box.querySelectorAll('div').forEach(d => d.onclick = () => {
                     document.getElementById('m-title').value = d.textContent;
@@ -701,7 +737,6 @@
                 });
             } else box.classList.add('hidden');
         };
-
     </script>
 </body>
 </html>
